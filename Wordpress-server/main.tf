@@ -72,5 +72,8 @@ resource "aws_instance" "instance1" {
   subnet_id                   = aws_subnet.sub1.id
   associate_public_ip_address = true
   user_data                   = base64encode(file("userdata.sh"))
+  tags = {
+    Name = "Wordpress"
+  }
 }
 
