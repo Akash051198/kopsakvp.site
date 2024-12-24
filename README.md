@@ -14,28 +14,39 @@ Provisioning a VPS server for jenkins and to host a wordpress site
 
 Step 2: Install the LEMP Stack
 
-**PHP, MySQL and Nginx installation**
-
->> sudo apt install php-fpm php-mysql mysql-server nginx unzip -y
-
-**Configuring Nginx to work with PHP**
-
-replace Nginx's 'default' configuration
-
+Installing the Nginx Web Server
 >>
-cd /etc/nginx/sites-available
-sudo rm default
-sudo nano default
+sudo apt install nginx
 >>
 
-paste in the following configuration to the newly created empty file:
+If you have the ufw firewall running, allow nginx
+>>
+sudo apt install mysql-server
+>>
+>>
+sudo mysql_secure_installation
+>>
+Answer 'yes' to all of the questions, and choose '2' as the required password strength
 
+sudo mysql
+
+>>
+CREATE DATABASE wordpress_db;
+CREATE USER 'wordpress_user'@'localhost' IDENTIFIED BY 'P@55word';
+GRANT ALL PRIVILEGES ON wordpress_db.* TO 'wordpress_user'@'localhost';
+>>
+
+Installing PHP and Configuring Nginx to Use the PHP 
+
+sudo apt install php-fpm php-mysql
+
+sudo nano /etc/nginx/sites-available/<your_domain>
 >>
 server {
     listen 80;
-    server_name your_server_domain_or_IP;
+    server_name kopsakvp.site www.kopsakvp.site;
 
-    root /var/www/html;
+    root /var/www/kopsakvp.site;
     index index.php index.html index.htm;
 
     location / {
@@ -44,12 +55,16 @@ server {
 
     location ~ .php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
     }
 }
 >
+
+sudo ln -s /etc/nginx/sites-available/your_domain /etc/nginx/sites-enabled/
+
+check configuration by running nginx -t
 
 restart Nginx for the new configuration
 
@@ -72,16 +87,6 @@ WordPress to the server's root folder
 Changing the owner of the Wordpress files
 
 >>sudo chown -R www-data:www-data *
-
-**Securing MySQL installation**
-
-sudo mysql
-
->>
-CREATE DATABASE wordpress_db;
-CREATE USER 'wordpress_user'@'localhost' IDENTIFIED BY 'P@55word';
-GRANT ALL PRIVILEGES ON wordpress_db.* TO 'wordpress_user'@'localhost';
->>
 
 **If you get the message "Unable to write to wp-config.php file":
 
