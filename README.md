@@ -10,16 +10,24 @@ Provisioning a VPS server for jenkins and to host a wordpress site
 **Wordpress Server:**
 <img width="218" alt="image" src="https://github.com/user-attachments/assets/d87f5d4f-eed3-4e76-96bf-0c83a8f2816e" />
 
+
+
+
 **We can Implement modules and re-use the template again, for time-being I have hard-coded the values.**
 
-Step 2: Install the LEMP Stack
+**Step 2: Install the LEMP Stack**
 
-Installing the Nginx Web Server
+
+**Installing the Nginx Web Server**
 >>
 sudo apt install nginx
 >>
 
+
 If you have the ufw firewall running, allow nginx
+
+**SQL Configuration**
+
 >>
 sudo apt install mysql-server
 >>
@@ -36,11 +44,15 @@ CREATE USER 'wordpress_user'@'localhost' IDENTIFIED BY 'P@55word';
 GRANT ALL PRIVILEGES ON wordpress_db.* TO 'wordpress_user'@'localhost';
 >>
 
-Installing PHP and Configuring Nginx to Use the PHP 
+
+
+**Installing PHP and Configuring Nginx to Use the PHP **
 
 sudo apt install php-fpm php-mysql
 
 sudo nano /etc/nginx/sites-available/<your_domain>
+
+
 >>
 server {
     listen 80;
@@ -60,7 +72,8 @@ server {
         include fastcgi_params;
     }
 }
->
+>>
+
 
 sudo ln -s /etc/nginx/sites-available/your_domain /etc/nginx/sites-enabled/
 
@@ -69,6 +82,8 @@ check configuration by running nginx -t
 restart Nginx for the new configuration
 
 sudo systemctl restart nginx
+
+
 
 **Downloading Wordpress to the Ubuntu server**
 
@@ -116,6 +131,8 @@ sudo systemctl reload nginx
 
 
 **Integrating Jenkins for CICD instead of Github actions**
+
+
 >>
 WordPress code is stored in a Git repository.
 need SSH access to the remote server where the WordPress site is hosted.
